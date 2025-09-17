@@ -1,12 +1,12 @@
 package com.AM3Ethazi.app.entitateak;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +30,7 @@ public class Idazlea {
     private String izena;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "idazlea", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "idazlea", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Liburua> liburuak;
 
     

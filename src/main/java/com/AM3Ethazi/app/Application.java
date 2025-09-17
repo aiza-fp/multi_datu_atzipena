@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.annotation.Order;
 
 import com.AM3Ethazi.app.entitateak.Idazlea;
 import com.AM3Ethazi.app.entitateak.Liburua;
@@ -22,8 +23,21 @@ public class Application {
 	}
 	
 	@Bean
+	@Order(1) // Execute first - initialize database before starting TestServer
 	public CommandLineRunner initData(IdazleaRepository idazleaRepo, LiburuaRepository liburuRepo) {
 		return args -> {
+			System.out.println("=== Starting database initialization ===");
+			
+			// Check if data already exists
+			long authorCount = idazleaRepo.count();
+			long bookCount = liburuRepo.count();
+			System.out.println("Current database state - Authors: " + authorCount + ", Books: " + bookCount);
+			
+			if (authorCount > 0 || bookCount > 0) {
+				System.out.println("Database already contains data. Skipping initialization.");
+				return;
+			}
+			
 			// Create authors
 			Idazlea idazlea1 = new Idazlea();
 			idazlea1.setIzena("J.K. Rowling");
@@ -35,9 +49,11 @@ public class Application {
 			idazlea3.setIzena("Stephen King");
 			
 			// Save authors
+			System.out.println("Saving authors...");
 			idazleaRepo.save(idazlea1);
 			idazleaRepo.save(idazlea2);
 			idazleaRepo.save(idazlea3);
+			System.out.println("Authors saved successfully!");
 			
 			// Create books
 			Liburua liburua1 = new Liburua();
@@ -56,11 +72,17 @@ public class Application {
 			liburua3.setGeneroak(Arrays.asList("Horror", "Thriller"));
 			
 			// Save books
+			System.out.println("Saving books...");
 			liburuRepo.save(liburua1);
 			liburuRepo.save(liburua2);
 			liburuRepo.save(liburua3);
+			System.out.println("Books saved successfully!");
 			
-			System.out.println("Database initialized with sample data!");
+			// Final verification
+			long finalAuthorCount = idazleaRepo.count();
+			long finalBookCount = liburuRepo.count();
+			System.out.println("=== Database initialization completed ===");
+			System.out.println("Final database state - Authors: " + finalAuthorCount + ", Books: " + finalBookCount);
 		};
 	}
 }

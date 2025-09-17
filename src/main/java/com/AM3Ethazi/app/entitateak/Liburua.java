@@ -29,7 +29,7 @@ public class Liburua {
     @JoinColumn(name = "idazlea_id")
     private Idazlea idazlea;
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "liburua_generoak", joinColumns = @JoinColumn(name = "liburua_id"))
     @Column(name = "generoa")
     private List<String> generoak;
