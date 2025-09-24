@@ -60,22 +60,58 @@ public class Application {
 			liburua1.setIzenburua("Harry Potter and the Philosopher's Stone");
 			liburua1.setIdazlea(idazlea1);
 			liburua1.setGeneroak(Arrays.asList("Fantasy", "Adventure"));
-			
+
 			Liburua liburua2 = new Liburua();
-			liburua2.setIzenburua("A Game of Thrones");
-			liburua2.setIdazlea(idazlea2);
-			liburua2.setGeneroak(Arrays.asList("Fantasy", "Drama"));
-			
+			liburua2.setIzenburua("Harry Potter and the Chamber of Secrets");
+			liburua2.setIdazlea(idazlea1);
+			liburua2.setGeneroak(Arrays.asList("Fantasy", "Mystery"));
+
 			Liburua liburua3 = new Liburua();
-			liburua3.setIzenburua("The Shining");
-			liburua3.setIdazlea(idazlea3);
-			liburua3.setGeneroak(Arrays.asList("Horror", "Thriller"));
-			
+			liburua3.setIzenburua("Harry Potter and the Prisoner of Azkaban");
+			liburua3.setIdazlea(idazlea1);
+			liburua3.setGeneroak(Arrays.asList("Fantasy", "Thriller"));
+
+			Liburua liburua4 = new Liburua();
+			liburua4.setIzenburua("A Game of Thrones");
+			liburua4.setIdazlea(idazlea2);
+			liburua4.setGeneroak(Arrays.asList("Fantasy", "Drama"));
+
+			Liburua liburua5 = new Liburua();
+			liburua5.setIzenburua("A Clash of Kings");
+			liburua5.setIdazlea(idazlea2);
+			liburua5.setGeneroak(Arrays.asList("Fantasy", "Epic"));
+
+			Liburua liburua6 = new Liburua();
+			liburua6.setIzenburua("A Storm of Swords");
+			liburua6.setIdazlea(idazlea2);
+			liburua6.setGeneroak(Arrays.asList("Fantasy", "Adventure"));
+
+			Liburua liburua7 = new Liburua();
+			liburua7.setIzenburua("The Shining");
+			liburua7.setIdazlea(idazlea3);
+			liburua7.setGeneroak(Arrays.asList("Horror", "Thriller"));
+
+			Liburua liburua8 = new Liburua();
+			liburua8.setIzenburua("It");
+			liburua8.setIdazlea(idazlea3);
+			liburua8.setGeneroak(Arrays.asList("Horror", "Supernatural"));
+
+			Liburua liburua9 = new Liburua();
+			liburua9.setIzenburua("Carrie");
+			liburua9.setIdazlea(idazlea3);
+			liburua9.setGeneroak(Arrays.asList("Horror", "Drama"));
+
 			// Save books
 			System.out.println("Saving books...");
 			liburuRepo.save(liburua1);
 			liburuRepo.save(liburua2);
 			liburuRepo.save(liburua3);
+			liburuRepo.save(liburua4);
+			liburuRepo.save(liburua5);
+			liburuRepo.save(liburua6);
+			liburuRepo.save(liburua7);
+			liburuRepo.save(liburua8);
+			liburuRepo.save(liburua9);
 			System.out.println("Books saved successfully!");
 			
 			// Final verification

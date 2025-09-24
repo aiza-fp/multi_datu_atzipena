@@ -189,6 +189,7 @@ public class TestServer implements CommandLineRunner {
                     return objectMapper.writeValueAsString(liburuak);
                     
                 case "GET_AUTHORS":
+                case "GET_AUTHOR_DATA":
                 case "/API/IDAZLEAK":
                 case "IDAZLEAK":
                     System.out.println("Accessing idazleak endpoint via text message");
