@@ -3,6 +3,7 @@ package com.AM3Ethazi.app.entitateak;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
@@ -29,10 +30,14 @@ public class Liburua {
     @JoinColumn(name = "idazlea_id")
     private Idazlea idazlea;
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "liburua_generoak", joinColumns = @JoinColumn(name = "liburua_id"))
-    @Column(name = "generoa")
-    private List<String> generoak;
+    @JsonIgnore //Original field: List<Generoa> generoak is hidden from JSON with @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "liburua_generoak",
+        joinColumns = @JoinColumn(name = "liburua_id"),
+        inverseJoinColumns = @JoinColumn(name = "generoa_id")
+    )
+    private List<Generoa> generoak;
     
     
     
@@ -43,6 +48,16 @@ public class Liburua {
         } else {
             return null;
         }
+    }
+    
+    @JsonProperty("generoak") // Custom getter: getGeneroakAsList() is exposed as "generoak" in JSON
+    public List<String> getGeneroakAsList() {
+        if (generoak == null) {
+            return List.of();
+        }
+        return generoak.stream()
+                .map(Generoa::getIzena)
+                .toList();
     }
 
     

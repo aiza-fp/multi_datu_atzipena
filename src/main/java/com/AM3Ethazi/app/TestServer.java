@@ -3,8 +3,10 @@ package com.AM3Ethazi.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.AM3Ethazi.app.entitateak.Idazlea;
 import com.AM3Ethazi.app.entitateak.Liburua;
+import com.AM3Ethazi.app.entitateak.Generoa;
 import com.AM3Ethazi.app.repository.IdazleaRepository;
 import com.AM3Ethazi.app.repository.LiburuaRepository;
+import com.AM3Ethazi.app.repository.GeneroaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -29,7 +31,8 @@ import java.util.List;
  * 
  * Supported commands:
  * - LIBURUAK / GET_BOOKS / /API/LIBURUAK → Returns all books (same as GET /api/liburuak)
- * - IDAZLEAK / GET_AUTHORS / /API/IDAZLEAK → Returns all authors (same as GET /api/idazleak)  
+ * - IDAZLEAK / GET_AUTHORS / /API/IDAZLEAK → Returns all authors (same as GET /api/idazleak)
+ * - GENRES / GET_GENRES / /API/GENRES → Returns all genres
  * - TEST / /API/TEST → Returns "API is working!" (same as GET /api/test)
  * - INSERT_IDAZLEA:AuthorName → Adds new author to database
  * - INSERT_LIBURUA:BookTitle:AuthorId:Genre1,Genre2 → Adds new book to database
@@ -54,6 +57,9 @@ public class TestServer implements CommandLineRunner {
     
     @Autowired
     private LiburuaRepository liburuaRepository;
+    
+    @Autowired
+    private GeneroaRepository generoaRepository;
     
     // Static reference to access repositories from static methods
     private static TestServer instance;
@@ -99,6 +105,11 @@ public class TestServer implements CommandLineRunner {
         return liburuaRepository.findAll();
     }
     
+    @Transactional(readOnly = true)
+    public List<Generoa> getAllGeneroak() {
+        return generoaRepository.findAll();
+    }
+    
     @Transactional(readOnly = true) 
     public List<Idazlea> getAllIdazleak() {
         // Now uses eager loading - no custom query needed!
@@ -114,7 +125,7 @@ public class TestServer implements CommandLineRunner {
     }
     
     @Transactional
-    public Liburua saveLiburua(String bookTitle, Long authorId, List<String> bookGenres) {
+    public Liburua saveLiburua(String bookTitle, Long authorId, List<Generoa> bookGenres) {
         java.util.Optional<Idazlea> authorOpt = idazleaRepository.findById(authorId);
         
         if (authorOpt.isPresent()) {
@@ -197,6 +208,14 @@ public class TestServer implements CommandLineRunner {
                     System.out.println("Found " + idazleak.size() + " authors");
                     return objectMapper.writeValueAsString(idazleak);
                     
+                case "GET_GENRES":
+                case "/API/GENRES":
+                case "GENRES":
+                    System.out.println("Accessing generoak endpoint via text message");
+                    List<Generoa> generoak = getAllGeneroak();
+                    System.out.println("Found " + generoak.size() + " genres");
+                    return objectMapper.writeValueAsString(generoak);
+                    
                 case "TEST":
                 case "/API/TEST":
                     return "API is working!";
@@ -221,12 +240,18 @@ public class TestServer implements CommandLineRunner {
                         Long authorId = Long.parseLong(parts[2]);
                         
                         // Get genres if provided
-                        List<String> bookGenres = new ArrayList<>();
+                        List<Generoa> bookGenres = new ArrayList<>();
                         if (parts.length > 3 && !parts[3].isEmpty()) {
                             String[] genreArray = parts[3].split(",");
-                            for (String genre : genreArray) {
-                                if (!genre.trim().isEmpty()) {
-                                    bookGenres.add(genre.trim());
+                            for (String genreName : genreArray) {
+                                if (!genreName.trim().isEmpty()) {
+                                    // Find or create genre
+                                    Generoa generoa = generoaRepository.findByIzena(genreName.trim());
+                                    if (generoa == null) {
+                                        generoa = new Generoa(genreName.trim());
+                                        generoa = generoaRepository.save(generoa);
+                                    }
+                                    bookGenres.add(generoa);
                                 }
                             }
                         }
@@ -243,7 +268,7 @@ public class TestServer implements CommandLineRunner {
                     
                 default:
                     return "ERROR: Unknown command: " + command + 
-                           "\nAvailable commands: GET_BOOKS, GET_AUTHORS, LIBURUAK, IDAZLEAK, TEST, INSERT_IDAZLEA:name, INSERT_LIBURUA:title:authorId:genres";
+                           "\nAvailable commands: GET_BOOKS, GET_AUTHORS, GET_GENRES, LIBURUAK, IDAZLEAK, GENRES, TEST, INSERT_IDAZLEA:name, INSERT_LIBURUA:title:authorId:genres";
             }
         } catch (Exception e) {
             System.err.println("Error processing request: " + e.getMessage());
